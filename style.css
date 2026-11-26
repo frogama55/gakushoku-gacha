@@ -379,8 +379,13 @@ html:has(.result[open]) { overflow: hidden; }
 .picks .dot { width: 12px; height: 12px; border-radius: 50%; }
 .picks .name { font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
 .picks .cat { display: block; font-size: .75rem; color: var(--muted); font-weight: 500; }
-.picks .price { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
-.picks .qty { color: var(--accent); margin-left: 4px; }
+.picks .price { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; text-align: right; }
+.picks .unit { display: block; font-size: .75rem; font-weight: 500; color: var(--muted); }
+.picks .qty {
+  display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px;
+  font-size: .8rem; line-height: 1.5; vertical-align: 2px;
+  background: var(--accent); color: var(--accent-ink);
+}
 @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
 
 .picks li.warn { outline: 1.5px dashed var(--accent); }

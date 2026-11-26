@@ -261,11 +261,14 @@
       li.innerHTML = `<span class="dot"></span><span class="name"><span class="t"></span><span class="cat"></span></span><span class="price"></span>`;
       li.querySelector(".dot").style.background = COLORS[i % COLORS.length];
       li.querySelector(".t").textContent = (item.corner ? "※" : "") + item.name;
+      if (qty > 1) li.querySelector(".t").insertAdjacentHTML("beforeend", `<span class="qty">×${qty}</span>`);
       li.querySelector(".cat").textContent = item.corner
         ? `※${item.corner}：売り切れ・昼だけの営業で、買えないかも`
         : `${item.regular ? "常設" : "日替り"}・${item.cat}`;
       if (item.corner) li.classList.add("warn");
-      li.querySelector(".price").innerHTML = `${yen(item.price * qty)}${qty > 1 ? `<span class="qty">×${qty}</span>` : ""}`;
+      // 2個以上なら「合計」を大きく、その下に「単価 × 個数」の内訳を出す（¥100×2 だと単価か合計か迷うため）
+      li.querySelector(".price").innerHTML = yen(item.price * qty)
+        + (qty > 1 ? `<span class="unit">${yen(item.price)} × ${qty}個</span>` : "");
       ul.appendChild(li);
     });
     const total = budget - rest;
@@ -431,7 +434,9 @@
     if (!state.lastPicks.length) return;
     const caf = cafeteria();
     const d = parseIso(state.date);
-    const lines = state.lastPicks.map(({ item, qty }) => `・${item.name}${qty > 1 ? ` ×${qty}` : ""} ${yen(item.price * qty)}`);
+    const lines = state.lastPicks.map(({ item, qty }) => qty > 1
+      ? `・${item.name} ${yen(item.price)} × ${qty}個 = ${yen(item.price * qty)}`
+      : `・${item.name} ${yen(item.price)}`);
     const text = `学食ガチャ（${caf.name} ${d.getMonth() + 1}/${d.getDate()} ${data.slots[state.slot]}）\n【${$("badge").textContent}】\n${lines.join("\n")}\n合計 ${$("total").textContent}`;
     try {
       await navigator.clipboard.writeText(text);

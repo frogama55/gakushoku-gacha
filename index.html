@@ -41,11 +41,11 @@
         <div class="chips" id="budgetChips"></div>
       </div>
 
-      <details class="opts">
-        <summary>ガチャの設定</summary>
-        <label class="check"><input type="checkbox" id="requireMain" checked> 主食を1品は必ず入れる</label>
+      <div class="field opts">
+        <span class="label">ガチャの設定</span>
+        <label class="check"><input type="checkbox" id="requireMain"> 主食を1品は必ず入れる</label>
         <label class="check"><input type="checkbox" id="allowDup" checked> 同じメニューの重複OK（サラダ5つもありえる）</label>
-      </details>
+      </div>
     </section>
 
     <section class="machine-area">
@@ -59,6 +59,7 @@
           <div class="slot-hole"></div>
         </div>
         <div class="capsule" id="capsule"><span></span></div>
+        <div class="burst" id="burst"></div>
       </div>
       <button class="spin" id="spin" type="button">ガチャを回す</button>
       <p class="status" id="status" role="status"></p>
@@ -71,7 +72,7 @@
         <span>合計</span><strong id="total"></strong>
         <span class="rest" id="rest"></span>
       </div>
-      <p class="caution">※ どのメニューも売り切れていることがあります。そのときは近いものに読み替えてください。</p>
+      <p class="caution">※ どのメニューも売り切れていることがあります。実際に食堂に行って確認してください。</p>
       <div class="actions">
         <button type="button" class="ghost" id="again">もう一回</button>
         <button type="button" class="ghost" id="copy">結果をコピー</button>
@@ -88,6 +89,7 @@
       <p>メニューは <a id="srcLink" href="https://www.cit-s.com/dining/" target="_blank" rel="noopener">シー・アイ・ティ・サービスの公式ページ</a> のPDFをもとにしています。都合により変更されることがあります。非公式のサービスです。</p>
     </footer>
   </main>
+  <div class="flash" id="flash" aria-hidden="true"></div>
   <script src="app.js"></script>
 </body>
 </html>

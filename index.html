@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>学食ガチャ</title>
+  <meta name="description" content="予算を決めて、今日の学食メニューをガチャで決めよう。">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <p class="eyebrow">今日なに食べる？</p>
+      <h1>学食ガチャ</h1>
+      <p class="lead">予算を入れて回すだけ。何が出ても文句なし。</p>
+    </header>
+
+    <section class="panel" aria-label="条件">
+      <div class="field">
+        <span class="label">食堂</span>
+        <div class="seg" id="cafeteria" role="radiogroup"></div>
+      </div>
+
+      <div class="row">
+        <label class="field">
+          <span class="label">日にち</span>
+          <select id="date"></select>
+        </label>
+        <div class="field">
+          <span class="label">時間帯</span>
+          <div class="seg small" id="slot" role="radiogroup"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="budget">予算</label>
+        <div class="budget">
+          <span class="yen">¥</span>
+          <input id="budget" type="number" inputmode="numeric" min="50" step="10" value="500">
+        </div>
+        <div class="chips" id="budgetChips"></div>
+      </div>
+
+      <details class="opts">
+        <summary>ガチャの設定</summary>
+        <label class="check"><input type="checkbox" id="requireMain" checked> 主食を1品は必ず入れる</label>
+        <label class="check"><input type="checkbox" id="allowDup" checked> 同じメニューの重複OK（サラダ5つもありえる）</label>
+      </details>
+    </section>
+
+    <section class="machine-area">
+      <div class="machine" id="machine" aria-hidden="true">
+        <div class="dome">
+          <span class="ball b1"></span><span class="ball b2"></span><span class="ball b3"></span>
+          <span class="ball b4"></span><span class="ball b5"></span><span class="ball b6"></span>
+        </div>
+        <div class="body">
+          <div class="knob" id="knob"></div>
+          <div class="slot-hole"></div>
+        </div>
+        <div class="capsule" id="capsule"><span></span></div>
+      </div>
+      <button class="spin" id="spin" type="button">ガチャを回す</button>
+      <p class="status" id="status" role="status"></p>
+    </section>
+
+    <section class="result" id="result" hidden aria-live="polite">
+      <p class="badge" id="badge"></p>
+      <ul class="picks" id="picks"></ul>
+      <div class="total">
+        <span>合計</span><strong id="total"></strong>
+        <span class="rest" id="rest"></span>
+      </div>
+      <p class="caution">※ どのメニューも売り切れていることがあります。そのときは近いものに読み替えてください。</p>
+      <div class="actions">
+        <button type="button" class="ghost" id="again">もう一回</button>
+        <button type="button" class="ghost" id="copy">結果をコピー</button>
+      </div>
+    </section>
+
+    <details class="lineup">
+      <summary>この日のラインナップ <span id="lineupCount"></span></summary>
+      <ul id="lineup"></ul>
+    </details>
+
+    <footer class="foot">
+      <p id="dataInfo"></p>
+      <p>メニューは <a id="srcLink" href="https://www.cit-s.com/dining/" target="_blank" rel="noopener">シー・アイ・ティ・サービスの公式ページ</a> のPDFをもとにしています。都合により変更されることがあります。非公式のサービスです。</p>
+    </footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

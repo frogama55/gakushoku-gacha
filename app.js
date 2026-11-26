@@ -75,15 +75,45 @@
     return { picks, rest };
   }
 
-  // レア判定：全部同じ（3個以上）→ SSR、同じものが4個以上 → SR
+  // 同じメニューが出たときの特殊メッセージ。n＝品名、q＝個数。どれか1つをランダムに出す
+  const DUP_PHRASES = [
+    (n) => `${n}がかぶった！`,
+    (n) => `${n}、おかわり確定`,
+    (n) => `${n}が分身した`,
+    (n, q) => `${n}×${q}、好きすぎでは`,
+    (n) => `${n}がまた来た`,
+  ];
+  const ALMOST_PHRASES = [
+    (n) => `ほぼ${n}`,
+    (n) => `${n}に包囲された`,
+    (n) => `${n}軍団＋1`,
+    (n) => `ひとつだけ${n}じゃない`,
+  ];
+  const ALL_PHRASES = [
+    (n) => `${n}しかない`,
+    (n, q) => `伝説：${n}×${q}`,
+    (n) => `今日は${n}の日`,
+    (n) => `全部${n}`,
+  ];
+
+  // 同じメニューの出方で、メッセージと演出を決める（どれにも当てはまらなければ null）
+  //   全部同じ（3個以上）       → SSR：虹色の演出
+  //   1つ以外ぜんぶ同じ（3個以上） → SR：金色の演出
+  //   それ以外で同じものが2個以上 → 演出は通常、メッセージだけ特別
+  // 2個とも同じ（例：¥300で¥150×2）は出やすい（約1割）ので SSR にはせず「重複あり」扱い
   function rarityOf(picks) {
-    if (picks.length < 3) return null;
     const counts = {};
     picks.forEach((p) => { counts[p.name] = (counts[p.name] || 0) + 1; });
-    const [name, qty] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
-    if (Object.keys(counts).length === 1) return { tier: "ssr", name, qty, label: `★★★ 伝説：${name} ×${qty} ★★★` };
-    if (qty >= 4) return { tier: "sr", name, qty, label: `★ レア：${name} ×${qty} ★` };
-    return null;
+    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const [name, qty] = entries[0] || [];
+    if (!(qty >= 2)) return null;
+    if (entries.length === 1 && picks.length >= 3) {
+      return { tier: "ssr", name, qty, label: `★★★ ${pick(ALL_PHRASES)(name, qty)} ★★★` };
+    }
+    if (entries.length === 2 && picks.length - qty === 1) {
+      return { tier: "sr", name, qty, label: `★ ${pick(ALMOST_PHRASES)(name, qty)} ★` };
+    }
+    return { tier: "dup", name, qty, label: pick(DUP_PHRASES)(name, qty) };
   }
 
   // 予算をちょうど使い切ったときの一言（出やすいので複数からランダム）
@@ -238,7 +268,7 @@
     const result = $("result");
     const ul = $("picks");
     ul.innerHTML = "";
-    result.classList.remove("sr", "ssr");
+    result.classList.remove("sr", "ssr", "dup");
     if (rarity) result.classList.add(rarity.tier);
     if (error === "main" || !picks.length) {
       const items = pool(cafeteria(), state.date, state.slot);
@@ -280,10 +310,15 @@
     state.lastPicks = groups;
   }
 
-  // 動作確認用：URLに ?demo=ssr / ?demo=sr を付けると、レア演出を必ず出す
+  // 動作確認用：URLに ?demo=ssr / ?demo=sr / ?demo=dup を付けると、そのパターンを必ず出す
   function demoOutcome(items, budget, tier) {
     const cheapest = items.slice().sort((a, b) => a.price - b.price)[0];
     if (!cheapest) return null;
+    if (tier === "dup") {
+      const others = items.filter((m) => m.name !== cheapest.name).slice(0, 2);
+      const picks = [cheapest, cheapest, ...others];
+      return { picks, rest: Math.max(0, budget - picks.reduce((s, m) => s + m.price, 0)) };
+    }
     const n = Math.max(3, Math.floor(budget / cheapest.price));
     const picks = Array(Math.min(n, MAX_ITEMS)).fill(cheapest);
     if (tier === "sr") picks.push(items.find((m) => m.name !== cheapest.name) || cheapest);

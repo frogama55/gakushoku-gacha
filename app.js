@@ -31,9 +31,9 @@
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
   const cafeteria = () => data.cafeterias.find((c) => c.id === state.caf);
 
-  // 平日（月〜金）だけを対象にする
-  function weekDates() {
-    const start = parseIso(data.weekStart);
+  // 平日（月〜金）だけを対象にする。週は食堂ごとに持つ（PDFの更新タイミングが食堂ごとに違うため）
+  function weekDates(caf = cafeteria()) {
+    const start = parseIso(caf.weekStart);
     return Array.from({ length: 5 }, (_, i) => {
       const d = new Date(start); d.setDate(start.getDate() + i); return isoLocal(d);
     });
@@ -46,7 +46,7 @@
     const alsoDinner = (m) => slot === "dinner" && m.slot === "lunch" && (caf.dinnerCats || []).includes(m.cat);
     const daily = (caf.daily[date] || []).filter((m) => m.slot === slot || alsoDinner(m));
     const regular = caf.regular.filter((m) => m.slots.includes(slot)).map((m) => {
-      const topping = m.dailyTopping?.[date];
+      const topping = caf.toppings?.[m.name]?.[date];
       return { ...m, name: topping ? `${m.name}（${topping}）` : m.name, regular: true };
     });
     return [...daily, ...regular];
@@ -149,8 +149,22 @@
       o.textContent = `${d.getMonth() + 1}/${d.getDate()}（${WEEKDAYS[d.getDay()]}）${today}${closed ? " 休業" : ""}`;
       sel.appendChild(o);
     });
-    if (!weekDates().includes(state.date)) state.date = weekDates()[0];
+    const dates = weekDates();
+    const today = isoLocal(new Date());
+    if (!dates.includes(state.date)) state.date = dates.includes(today) ? today : dates[0];
     sel.value = state.date;
+    renderDataInfo(caf, dates, today);
+  }
+
+  function renderDataInfo(caf, dates, today) {
+    const s = parseIso(dates[0]);
+    const e = parseIso(dates[dates.length - 1]);
+    const range = `${s.getMonth() + 1}/${s.getDate()}〜${e.getMonth() + 1}/${e.getDate()}`;
+    let text = `${caf.name}の掲載メニュー：${range}（${data.updatedAt} 更新）`;
+    const dow = new Date().getDay();
+    if (dow === 0 || dow === 6) text += "｜土日は対象外です";
+    else if (today > dates[dates.length - 1]) text += "｜今週のメニューは準備中です。最新の掲載分で回しています";
+    $("dataInfo").textContent = text;
   }
 
   function renderSlots() {
@@ -357,9 +371,20 @@
 
   async function init() {
     try {
-      const res = await fetch("data/menu.json", { cache: "no-cache" });
-      if (!res.ok) throw new Error(res.status);
-      data = await res.json();
+      const load = async (path) => {
+        const res = await fetch(path, { cache: "no-cache" });
+        if (!res.ok) throw new Error(`${path}: ${res.status}`);
+        return res.json();
+      };
+      // cafeterias.json＝手で管理する固定情報、week.json＝自動更新される週ごとのメニュー
+      const [base, week] = await Promise.all([load("data/cafeterias.json"), load("data/week.json")]);
+      data = {
+        ...base,
+        updatedAt: week.updatedAt,
+        cafeterias: base.cafeterias
+          .filter((c) => week.cafeterias[c.id])
+          .map((c) => ({ closed: [], closedSlots: {}, notes: {}, toppings: {}, ...c, ...week.cafeterias[c.id] })),
+      };
     } catch (e) {
       $("status").textContent = "メニューを読み込めませんでした。時間をおいて再読み込みしてください。";
       $("spin").disabled = true;
@@ -373,9 +398,6 @@
       ["requireMain", "allowDup"].forEach((k) => { if (typeof saved[k] === "boolean") $(k).checked = saved[k]; });
     }
 
-    const today = isoLocal(new Date());
-    const dates = weekDates();
-    state.date = dates.includes(today) ? today : dates[0];
     state.slot = defaultSlot();
 
     [300, 400, 500, 700, 1000].forEach((v) => {
@@ -391,13 +413,6 @@
     $("spin").addEventListener("click", spin);
     $("again").addEventListener("click", spin);
     $("copy").addEventListener("click", copyResult);
-
-    const start = parseIso(data.weekStart);
-    const end = parseIso(dates[dates.length - 1]);
-    $("dataInfo").textContent = `掲載メニュー：${start.getMonth() + 1}/${start.getDate()}〜${end.getMonth() + 1}/${end.getDate()}（${data.updatedAt} 更新）`;
-    const dow = new Date().getDay();
-    if (dow === 0 || dow === 6) $("dataInfo").textContent += "｜土日は対象外です";
-    else if (!dates.includes(today)) $("dataInfo").textContent += "｜今日の分はまだ反映されていません";
 
     renderCafeterias();
     renderDates();

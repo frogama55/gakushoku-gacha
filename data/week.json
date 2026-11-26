@@ -1,25 +1,8 @@
 {
-  "weekStart": "2026-11-23",
   "updatedAt": "2026-11-26",
-  "source": "https://www.cit-s.com/dining/",
-  "slots": {
-    "morning": "朝",
-    "lunch": "昼",
-    "dinner": "夕"
-  },
-  "cafeterias": [
-    {
-      "id": "tsudanuma",
-      "name": "津田沼",
-      "campus": "津田沼キャンパス",
-      "place": "3号館1階",
-      "hours": "朝定食 8:30〜9:30 / 昼・夕定食 10:30〜19:00（麺・軽食 〜14:00）",
-      "pdf": "https://www.cit-s.com/wp/wp-content/themes/cit/syokudo/t.pdf",
-      "closed": [],
-      "dinnerCats": [
-        "定食・丼"
-      ],
-      "regular": [],
+  "cafeterias": {
+    "tsudanuma": {
+      "weekStart": "2026-11-23",
       "daily": {
         "2026-11-23": [
           {
@@ -496,118 +479,15 @@
             "slot": "dinner"
           }
         ]
-      }
-    },
-    {
-      "id": "shinnara1f",
-      "name": "新習志野 1F",
-      "campus": "新習志野キャンパス",
-      "place": "13号館食堂1階（食券方式）",
-      "hours": "朝食 8:30〜9:30 / 10:30〜19:30（LO 19:00）",
-      "pdf": "https://www.cit-s.com/wp/wp-content/themes/cit/syokudo/s1.pdf",
+      },
       "closed": [],
-      "dinnerCats": [
-        "定食・丼"
-      ],
-      "regular": [
-        {
-          "name": "カレー",
-          "price": 250,
-          "cat": "カレー",
-          "main": true,
-          "slots": [
-            "lunch",
-            "dinner"
-          ]
-        },
-        {
-          "name": "サラダ付カレー",
-          "price": 300,
-          "cat": "カレー",
-          "main": true,
-          "slots": [
-            "lunch",
-            "dinner"
-          ]
-        },
-        {
-          "name": "大盛カレー",
-          "price": 300,
-          "cat": "カレー",
-          "main": true,
-          "slots": [
-            "lunch",
-            "dinner"
-          ]
-        },
-        {
-          "name": "グルメカレー",
-          "price": 350,
-          "cat": "カレー",
-          "main": true,
-          "slots": [
-            "lunch",
-            "dinner"
-          ],
-          "dailyTopping": {
-            "2026-11-23": "唐揚",
-            "2026-11-24": "ナゲット",
-            "2026-11-25": "グリルチキン",
-            "2026-11-26": "イカフライ",
-            "2026-11-27": "スクランブルエッグ"
-          }
-        },
-        {
-          "name": "ライス",
-          "price": 100,
-          "cat": "単品",
-          "main": false,
-          "slots": [
-            "lunch",
-            "dinner"
-          ]
-        },
-        {
-          "name": "唐揚",
-          "price": 150,
-          "cat": "単品",
-          "main": false,
-          "slots": [
-            "lunch",
-            "dinner"
-          ]
-        },
-        {
-          "name": "コロッケ",
-          "price": 50,
-          "cat": "単品",
-          "main": false,
-          "slots": [
-            "lunch",
-            "dinner"
-          ]
-        },
-        {
-          "name": "サラダ",
-          "price": 50,
-          "cat": "単品",
-          "main": false,
-          "slots": [
-            "lunch",
-            "dinner"
-          ]
-        },
-        {
-          "name": "味噌汁",
-          "price": 50,
-          "cat": "単品",
-          "main": false,
-          "slots": [
-            "lunch",
-            "dinner"
-          ]
-        }
-      ],
+      "closedSlots": {},
+      "notes": {},
+      "toppings": {},
+      "sourceHash": "32f8789d1defd5471ea7392466dc37169617f549ea9ce74a5d935c4dc125707d"
+    },
+    "shinnara1f": {
+      "weekStart": "2026-11-23",
       "daily": {
         "2026-11-23": [
           {
@@ -830,101 +710,29 @@
           }
         ]
       },
-      "notes": {
-        "2026-11-23": "勤労感謝の日：10:30〜14:00、夕方は休業"
-      },
+      "closed": [],
       "closedSlots": {
         "2026-11-23": [
           "morning",
           "dinner"
         ]
-      }
-    },
-    {
-      "id": "shinnara2f",
-      "name": "新習志野 2F",
-      "campus": "新習志野キャンパス",
-      "place": "13号館食堂2階（カフェテリア方式）",
-      "hours": "10:30〜14:00",
-      "pdf": "https://www.cit-s.com/wp/wp-content/themes/cit/syokudo/s2.pdf",
-      "closed": [
-        "2026-11-23"
-      ],
-      "regular": [
-        {
-          "name": "ライス",
-          "price": 100,
-          "cat": "小鉢",
-          "main": false,
-          "slots": [
-            "lunch"
-          ]
-        },
-        {
-          "name": "ライス（小）",
-          "price": 50,
-          "cat": "小鉢",
-          "main": false,
-          "slots": [
-            "lunch"
-          ]
-        },
-        {
-          "name": "きんぴら",
-          "price": 50,
-          "cat": "小鉢",
-          "main": false,
-          "slots": [
-            "lunch"
-          ]
-        },
-        {
-          "name": "ポテト",
-          "price": 100,
-          "cat": "小鉢",
-          "main": false,
-          "slots": [
-            "lunch"
-          ]
-        },
-        {
-          "name": "ミニサラダ",
-          "price": 50,
-          "cat": "小鉢",
-          "main": false,
-          "slots": [
-            "lunch"
-          ]
-        },
-        {
-          "name": "コロッケ",
-          "price": 80,
-          "cat": "小鉢",
-          "main": false,
-          "slots": [
-            "lunch"
-          ]
-        },
-        {
-          "name": "ホームパン",
-          "price": 120,
-          "cat": "小鉢",
-          "main": false,
-          "slots": [
-            "lunch"
-          ]
-        },
-        {
-          "name": "スイーツ",
-          "price": 50,
-          "cat": "小鉢",
-          "main": false,
-          "slots": [
-            "lunch"
-          ],
-          "note": "¥50〜"
+      },
+      "notes": {
+        "2026-11-23": "勤労感謝の日：10:30〜14:00、夕方は休業"
+      },
+      "toppings": {
+        "グルメカレー": {
+          "2026-11-23": "唐揚",
+          "2026-11-24": "ナゲット",
+          "2026-11-25": "グリルチキン",
+          "2026-11-26": "イカフライ",
+          "2026-11-27": "スクランブルエッグ"
         }
-      ],
+      },
+      "sourceHash": "563e4adf9a790958cae6ca5caa956022a73ce6be9c2b372052f69df2a92945dc"
+    },
+    "shinnara2f": {
+      "weekStart": "2026-11-23",
       "daily": {
         "2026-11-24": [
           {
@@ -1019,9 +827,15 @@
           }
         ]
       },
+      "closed": [
+        "2026-11-23"
+      ],
+      "closedSlots": {},
       "notes": {
         "2026-11-23": "勤労感謝の日のため休業"
-      }
+      },
+      "toppings": {},
+      "sourceHash": "657640905741983ce5281aad3566ba65dc3d0d4a8ce71f93cbff4c7465f5ced0"
     }
-  ]
+  }
 }

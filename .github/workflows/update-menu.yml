@@ -1,0 +1,72 @@
+name: メニュー更新
+
+on:
+  schedule:
+    - cron: "0 21 * * *" # 毎日 6:00（日本時間）
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "PDFが変わっていなくても読み直す"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+  pages: write
+
+concurrency:
+  group: update-menu
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: PDFを確認してメニューを更新
+        id: update
+        continue-on-error: true
+        shell: bash # pipefail を有効にして、tee を挟んでも失敗を拾う
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+        run: python3 scripts/update_menu.py ${{ inputs.force && '--force' || '' }} | tee update-log.txt
+
+      - name: 変更があればコミットして公開
+        run: |
+          if git diff --quiet -- data/week.json; then
+            echo "week.json に変更なし"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/week.json
+          git commit -m "メニューを自動更新（$(TZ=Asia/Tokyo date +%F)）"
+          git push
+          # GITHUB_TOKEN での push では Pages が動かないことがあるので、明示的にビルドを依頼する
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" || echo "Pages ビルドの依頼に失敗（次の push で反映されます）"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: 失敗したら Issue で知らせる
+        if: steps.update.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="メニュー自動更新に失敗しました"
+          body="$(printf '実行ログ: %s/%s/actions/runs/%s\n\n%s\n' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$(cat update-log.txt)")"
+          # 同じタイトルの Issue が開いていればコメントを足す（毎日 Issue が増えないように）
+          num=$(gh issue list --state open --search "in:title $title" --json number --jq '.[0].number')
+          if [ -n "$num" ]; then
+            gh issue comment "$num" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi
+          exit 1

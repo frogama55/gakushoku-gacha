@@ -36,7 +36,8 @@ CAFETERIAS_PATH = ROOT / "data" / "cafeterias.json"
 WEEK_PATH = ROOT / "data" / "week.json"
 JST = dt.timezone(dt.timedelta(hours=9))
 
-DEFAULT_MODELS = "gemini-3.8-flash,gemini-3.5-flash-lite"  # 先頭から順に試す（混雑時は次へ）
+# 先頭から順に試す（混雑していたり、出力が検証に落ちたりしたら次へ）
+DEFAULT_MODELS = "gemini-3.8-flash,gemini-3.6-flash,gemini-3.5-flash-lite"
 API_BASE = "https://generativelanguage.googleapis.com/v1beta"
 API_REVISION = "2026-05-20"
 USER_AGENT = "gakushoku-gacha-menu-updater/1.0"
@@ -122,7 +123,8 @@ def build_prompt(caf: dict, today: dt.date, example: dict | None) -> str:
         "",
         "# ルール",
         f"- 今日は {today.isoformat()}。PDFの日付に年がなければ、今日に近い年を補ってください。",
-        "- 月〜金だけを出力します。土曜・日曜は出力しないでください。",
+        "- 表の列見出しにある月〜金の日付を、すべて1日1件ずつ出力する（休業の日も closed=true で出す）。土曜・日曜は出力しない。",
+        "- 各列のメニューは、その列の日付の items に入れる。休業の列に別の日のメニューを入れない。",
         "- 価格は円の整数。「＜工大400＞」は 400。行見出しにだけ価格がある場合はその価格を各日に当てる。",
         "- 半角カタカナは全角にする。料理名は表の文字どおりに、改行で分かれた語はつなげる。",
         "- 行見出しが料理の種類を表すときは、それと分かる名前にする（例: カレー欄の「メンチカツ」→「メンチカツカレー」）。",
@@ -167,14 +169,13 @@ def parse_json_text(text: str):
 BUSY_CODES = (429, 500, 502, 503, 504)
 
 
-def call_gemini(pdf: bytes, prompt: str, api_key: str, models: list[str]) -> dict:
-    """モデルを順に試す。混雑（503など）なら少し待って1回だけ再試行し、だめなら次のモデルへ。"""
-    errors = []
+def gemini_candidates(pdf: bytes, prompt: str, api_key: str, models: list[str], errors: list[str]):
+    """モデルを順に試し、読み取れた結果を (モデル名, 出力) で1つずつ返す。
+    混雑（503など）なら少し待って1回だけ再試行し、だめなら次のモデルへ。呼び出しの失敗は errors に足す。"""
     for model in models:
         result = call_one_model(pdf, prompt, api_key, model, errors)
         if result is not None:
-            return result
-    raise UpdateError("Gemini の呼び出しに失敗しました:\n" + "\n".join(errors))
+            yield model, result
 
 
 def call_one_model(pdf: bytes, prompt: str, api_key: str, model: str, errors: list[str]) -> dict | None:
@@ -367,25 +368,37 @@ def main(argv=None) -> int:
             if prev and prev.get("sourceHash") == digest and not args.force:
                 report.append(f"- {caf['name']}: PDFに変化なし")
                 continue
+            problems: list[str] = []
             if args.extracted:
-                raw = load_json(args.extracted / f"{cid}.json")
+                candidates = [("extracted", load_json(args.extracted / f"{cid}.json"))]
             else:
                 if not api_key:
                     raise UpdateError("環境変数 GEMINI_API_KEY が設定されていません")
                 prompt = build_prompt(caf, today, to_example(prev) if prev else None)
-                raw = call_gemini(pdf, prompt, api_key, models)
-            entry = transform(raw, caf)
-            errors = validate(entry, prev)
-            if errors:
-                # 原因を追えるよう、Gemini の生の出力をログに残す
-                print(f"[{cid}] Gemini の出力:\n{json.dumps(raw, ensure_ascii=False)[:4000]}", file=sys.stderr)
-                raise UpdateError("検証エラー:\n" + "\n".join(f"  - {e}" for e in errors))
+                candidates = gemini_candidates(pdf, prompt, api_key, models, problems)
+
+            # 読み取り結果が検証に落ちたら、次のモデルでも読み直す
+            entry, used = None, None
+            for label, raw in candidates:
+                try:
+                    candidate = transform(raw, caf)
+                    errors = validate(candidate, prev)
+                except (UpdateError, KeyError, ValueError, TypeError) as e:
+                    errors = [f"変換できない出力: {e}"]
+                if not errors:
+                    entry, used = candidate, label
+                    break
+                # 原因を追えるよう、生の出力をログに残す
+                print(f"[{cid}] {label} の出力:\n{json.dumps(raw, ensure_ascii=False)[:4000]}", file=sys.stderr)
+                problems.append(f"{label} → 検証エラー:\n" + "\n".join(f"    - {e}" for e in errors))
+            if entry is None:
+                raise UpdateError("\n" + "\n".join(f"  - {p}" for p in problems))
             entry["sourceHash"] = digest
             if entry != prev:
                 week["cafeterias"][cid] = entry
                 changed = True
             count = sum(len(v) for v in entry["daily"].values())
-            report.append(f"- {caf['name']}: 更新（{entry['weekStart']} の週、日替り {count} 品）")
+            report.append(f"- {caf['name']}: 更新（{entry['weekStart']} の週、日替り {count} 品、{used}）")
         except (UpdateError, urllib.error.URLError, OSError, KeyError, ValueError) as e:
             failed = True
             report.append(f"- {caf['name']}: **失敗** {e}")

@@ -293,19 +293,69 @@ select, input[type="number"] {
   .machine .capsule.big { animation: none; opacity: 1; transform: scale(2); }
   .machine.spinning .knob, .machine.spinning .ball { animation: none; }
   .spin { animation: none; }
+  .result[open], .result::backdrop { animation: none; }
   .machine.dropped .capsule { animation: none; opacity: 1; transform: translateY(14px); }
   .picks li { animation: none !important; opacity: 1 !important; }
 }
 
-/* ===== result ===== */
+/* ===== 開封演出：カプセルが中央に来て、揺れて、開いて、光が画面を覆う ===== */
+.stage { position: fixed; inset: 0; z-index: 40; pointer-events: none; }
+.stage[hidden] { display: none; }
+.cap { position: fixed; width: 40px; height: 40px; margin: -20px 0 0 -20px; }
+.cap-top, .cap-bottom { position: absolute; left: 0; right: 0; height: 50%; border: 2px solid rgba(0,0,0,.15); }
+.cap-top { top: 0; border-radius: 20px 20px 0 0; border-bottom: 0; background: var(--cap, #f4b63f); transform-origin: 50% 100%; }
+.cap-bottom { bottom: 0; border-radius: 0 0 20px 20px; border-top: 0; background: #fff; transform-origin: 50% 0; }
+.cap.gold .cap-top { background: radial-gradient(circle at 35% 40%, #fff8d0, #ffd54a 50%, #d49a12); }
+.cap.rainbow .cap-top { background: linear-gradient(90deg, #ff5f6d, #ffc371, #f9f871, #6cc4a1, #6aa6e8, #a98be0); }
+.cap.gold, .cap.rainbow { filter: drop-shadow(0 0 6px #fff3b0); }
+.cap.wobble .cap-top, .cap.wobble .cap-bottom { animation: wobble .16s ease-in-out infinite alternate; }
+.cap.wobble.hard .cap-top, .cap.wobble.hard .cap-bottom { animation-duration: .08s; }
+.cap.open .cap-top { animation: lidOff .5s cubic-bezier(.2,.8,.3,1) forwards; }
+.cap.open .cap-bottom { animation: baseOff .5s ease-in forwards; }
+/* 開いた口からあふれる光 */
+.glow {
+  position: fixed; left: 50%; top: 50%; width: 80px; height: 80px; margin: -40px 0 0 -40px;
+  border-radius: 50%; opacity: 0;
+  background: radial-gradient(circle, #fff 0 35%, rgba(255,246,210,.9) 55%, rgba(255,220,150,0) 72%);
+}
+.glow.on { animation: glowUp .55s cubic-bezier(.5,0,.8,.4) forwards; }
+.stage.gold .glow { background: radial-gradient(circle, #fff 0 30%, rgba(255,226,120,.95) 55%, rgba(255,200,40,0) 72%); }
+.stage.rainbow .glow { background: radial-gradient(circle, #fff 0 30%, rgba(255,195,113,.9) 45%, rgba(106,166,232,.8) 60%, rgba(169,139,224,0) 72%); }
+.flash.full { animation: whiteOut .3s ease-in forwards; }
+
+@keyframes wobble { from { transform: rotate(-9deg); } to { transform: rotate(9deg); } }
+@keyframes lidOff { to { transform: translate(-30px, -70px) rotate(-40deg); opacity: 0; } }
+@keyframes baseOff { to { transform: translateY(40px); opacity: 0; } }
+@keyframes glowUp { 0% { opacity: 1; transform: scale(.3); } 100% { opacity: 1; transform: scale(40); } }
+@keyframes whiteOut { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== result（サイトの上に重ねるポップアップ） ===== */
 .result {
+  width: min(calc(100% - 32px), 480px);
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  margin: auto;
+  color: var(--ink);
   background: var(--surface);
   border: 2px solid var(--accent);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 18px;
-  margin-top: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+  padding: 22px 18px 18px;
 }
+.result[open] { animation: resultIn .5s cubic-bezier(.2,1.3,.4,1) both; }
+/* 光が引いていくと、結果が浮かび上がる */
+.result::backdrop { background: rgba(25, 15, 10, .55); animation: lightOut .9s ease-out both; }
+@keyframes resultIn { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+@keyframes lightOut { from { background: #fff; } 30% { background: #fff; } to { background: rgba(25, 15, 10, .55); } }
+html:has(.result[open]) { overflow: hidden; }
+.close {
+  position: absolute; top: 8px; right: 8px;
+  width: 36px; height: 36px; border-radius: 50%;
+  font: inherit; font-size: 1.4rem; line-height: 1; color: var(--muted);
+  background: transparent; border: 0; cursor: pointer;
+}
+.close:hover { background: var(--bg); }
+.result .badge { padding: 0 28px; }
 /* 結果の一言：ハンコのように大きく押す */
 .badge {
   margin: 4px 0 16px;
@@ -340,6 +390,13 @@ select, input[type="number"] {
 .total strong { font-size: 1.6rem; font-variant-numeric: tabular-nums; }
 .total .rest { color: var(--muted); font-size: .9rem; margin-left: auto; }
 .actions { display: flex; gap: 8px; margin-top: 14px; }
+.primary {
+  flex: 1; font: inherit; font-weight: 800; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink);
+  border: 1.5px solid var(--accent); border-radius: 999px; padding: 8px 12px;
+  box-shadow: 0 3px 0 var(--machine-dark);
+}
+.primary:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--machine-dark); }
 .ghost {
   flex: 1; font: inherit; font-weight: 700; cursor: pointer;
   background: transparent; color: var(--accent);

@@ -78,20 +78,6 @@
       </div>
     </details>
 
-    <section class="result" id="result" hidden aria-live="polite">
-      <p class="badge" id="badge"></p>
-      <ul class="picks" id="picks"></ul>
-      <div class="total">
-        <span>合計</span><strong id="total"></strong>
-        <span class="rest" id="rest"></span>
-      </div>
-      <p class="caution">※ どのメニューも売り切れていることがあります。実際に食堂に行って確認してください。</p>
-      <div class="actions">
-        <button type="button" class="ghost" id="again">もう一回</button>
-        <button type="button" class="ghost" id="copy">結果をコピー</button>
-      </div>
-    </section>
-
     <details class="lineup">
       <summary>この日のラインナップ <span id="lineupCount"></span></summary>
       <ul id="lineup"></ul>
@@ -102,7 +88,27 @@
       <p>メニューは <a id="srcLink" href="https://www.cit-s.com/dining/" target="_blank" rel="noopener">シー・アイ・ティ・サービスの公式ページ</a> のPDFをもとにしています。都合により変更されることがあります。非公式のサービスです。</p>
     </footer>
   </main>
+  <!-- 演出用：カプセルが画面の中央に来て開き、光が画面を覆う -->
+  <div class="stage" id="stage" aria-hidden="true" hidden>
+    <div class="glow" id="glow"></div>
+    <div class="cap" id="cap"><span class="cap-top"></span><span class="cap-bottom"></span></div>
+  </div>
   <div class="flash" id="flash" aria-hidden="true"></div>
+
+  <dialog class="result" id="result" aria-labelledby="badge">
+    <button type="button" class="close" id="close" aria-label="閉じる">×</button>
+    <p class="badge" id="badge"></p>
+    <ul class="picks" id="picks"></ul>
+    <div class="total">
+      <span>合計</span><strong id="total"></strong>
+      <span class="rest" id="rest"></span>
+    </div>
+    <p class="caution">※ どのメニューも売り切れていることがあります。実際に食堂に行って確認してください。</p>
+    <div class="actions">
+      <button type="button" class="primary" id="again">もう一回</button>
+      <button type="button" class="ghost" id="copy">結果をコピー</button>
+    </div>
+  </dialog>
   <script src="app.js"></script>
 </body>
 </html>

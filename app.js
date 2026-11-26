@@ -219,7 +219,8 @@
     $("capsule").className = "capsule";
     $("burst").innerHTML = "";
   }
-  function clearResult() { $("result").hidden = true; resetMachine(); }
+  function clearResult() { closeResult(); resetMachine(); }
+  function closeResult() { if ($("result").open) $("result").close(); }
 
   // ---------- spin ----------
   function showResult({ picks, rest, error }, budget, rarity) {
@@ -236,7 +237,6 @@
       $("total").textContent = yen(0);
       $("rest").textContent = "";
       state.lastPicks = [];
-      result.hidden = false;
       return;
     }
 
@@ -264,7 +264,6 @@
     $("total").textContent = yen(total);
     $("rest").textContent = `予算 ${yen(budget)}・残り ${yen(rest)}`;
     state.lastPicks = groups;
-    result.hidden = false;
   }
 
   // 動作確認用：URLに ?demo=ssr / ?demo=sr を付けると、レア演出を必ず出す
@@ -321,7 +320,13 @@
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const wait = (ms) => new Promise((r) => setTimeout(r, reduce ? 0 : ms));
 
-    $("result").hidden = true;
+    closeResult();
+    // 機械が画面外なら（下にスクロールしていたら）見える位置に戻してから回す
+    const r = machine.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > window.innerHeight) {
+      machine.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+      await wait(400);
+    }
     resetMachine();
     void machine.offsetWidth; // restart animation
     capsule.style.background = "";
@@ -352,12 +357,65 @@
     } else {
       capsule.style.background = pick(COLORS);
       machine.classList.add("dropped");
-      await wait(450);
+      await wait(550);
     }
 
     showResult(outcome, budget, rarity);
+    if (!reduce) await openCapsule(rarity?.tier, capsule.style.background);
+    $("result").showModal();
+    endStage();
+    resetMachine();
     btn.disabled = false;
-    $("result").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" });
+  }
+
+  // カプセルが画面の中央に来て、揺れて、開くと光が画面を覆う。真っ白になったところで終わる
+  async function openCapsule(tier, color) {
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    const src = $("capsule");
+    const stage = $("stage");
+    const cap = $("cap");
+    const rect = src.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const fx = tier === "ssr" ? "rainbow" : tier === "sr" ? "gold" : "";
+
+    stage.className = `stage ${fx}`;
+    cap.className = `cap ${fx}`;
+    cap.style.setProperty("--cap", color || pick(COLORS));
+    cap.style.left = `${x}px`;
+    cap.style.top = `${y}px`;
+    cap.style.transition = "none";
+    cap.style.transform = `scale(${rect.width / 40})`;
+    stage.hidden = false;
+    src.style.visibility = "hidden";
+    void cap.offsetWidth;
+
+    // 画面の中央へ、大きくなりながら飛んでくる
+    cap.style.transition = "transform .6s cubic-bezier(.3,1.3,.5,1)";
+    cap.style.transform = `translate(${window.innerWidth / 2 - x}px, ${window.innerHeight / 2 - y}px) scale(3.2)`;
+    await wait(650);
+
+    // ガタガタ揺れる（レアほど長く激しく）
+    cap.classList.add("wobble");
+    if (fx) cap.classList.add("hard");
+    await wait(fx === "rainbow" ? 1200 : fx ? 950 : 750);
+
+    // パカッ → 光があふれて画面が真っ白に
+    cap.classList.remove("wobble", "hard");
+    cap.classList.add("open");
+    $("glow").classList.add("on");
+    await wait(220);
+    $("flash").classList.add("full");
+    await wait(320);
+  }
+
+  // 結果を出したあとに演出を片付ける。ポップアップの背景が白から暗く引いていくので、ここは一瞬で消してよい
+  function endStage() {
+    $("stage").hidden = true;
+    $("cap").className = "cap";
+    $("glow").classList.remove("on");
+    $("flash").classList.remove("full");
+    $("capsule").style.visibility = "";
   }
 
   async function copyResult() {
@@ -424,6 +482,14 @@
     ["requireMain", "allowDup"].forEach((k) => $(k).addEventListener("change", () => { persist(); renderSummary(); }));
     $("spin").addEventListener("click", spin);
     $("again").addEventListener("click", spin);
+    $("close").addEventListener("click", closeResult);
+    // ポップアップの外側（暗いところ）を押したら閉じる
+    $("result").addEventListener("click", (e) => {
+      if (e.target !== $("result")) return; // 中のボタン（キーボード操作だと座標が0になる）は対象外
+      const r = $("result").getBoundingClientRect();
+      const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+      if (!inside) closeResult();
+    });
     $("copy").addEventListener("click", copyResult);
 
     renderCafeterias();

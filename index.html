@@ -6,7 +6,7 @@
   <title>学食ガチャ</title>
   <meta name="description" content="予算を決めて、今日の学食メニューをガチャで決めよう。">
   <!-- style.css / app.js を変えたら ?v= の数字を上げる（古いファイルがブラウザに残って動かなくなるのを防ぐ） -->
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
   <main class="wrap">
@@ -96,7 +96,7 @@
   </div>
   <div class="flash" id="flash" aria-hidden="true"></div>
 
-  <dialog class="result" id="result" aria-labelledby="badge">
+  <dialog class="result" id="result" aria-labelledby="badge" tabindex="-1">
     <button type="button" class="close" id="close" aria-label="閉じる">×</button>
     <p class="badge" id="badge"></p>
     <ul class="picks" id="picks"></ul>
@@ -110,6 +110,6 @@
       <button type="button" class="ghost" id="copy">結果をコピー</button>
     </div>
   </dialog>
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

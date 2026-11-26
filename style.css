@@ -342,6 +342,7 @@ select, input[type="number"] {
   box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
   padding: 22px 18px 18px;
 }
+.result:focus { outline: none; }
 .result[open] { animation: resultIn .5s cubic-bezier(.2,1.3,.4,1) both; }
 /* 光が引いていくと、結果が浮かび上がる */
 .result::backdrop { background: rgba(25, 15, 10, .55); animation: lightOut .9s ease-out both; }

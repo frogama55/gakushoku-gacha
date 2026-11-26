@@ -229,6 +229,8 @@
     const dlg = $("result");
     if (typeof dlg.showModal === "function") dlg.showModal();
     else dlg.setAttribute("open", ""); // <dialog> 未対応の古いブラウザでも結果だけは出す
+    // 開いた直後は × ではなくポップアップ自体にフォーカスを置く（× の周りに青い輪が出るのを防ぐ）
+    dlg.focus();
   }
 
   // ---------- spin ----------

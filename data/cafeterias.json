@@ -216,6 +216,33 @@
             "lunch"
           ],
           "note": "¥50〜"
+        },
+        {
+          "name": "ハーフカツサンド",
+          "price": 150,
+          "cat": "軽食",
+          "main": true,
+          "slots": [
+            "lunch"
+          ]
+        },
+        {
+          "name": "カツサンド",
+          "price": 300,
+          "cat": "軽食",
+          "main": true,
+          "slots": [
+            "lunch"
+          ]
+        },
+        {
+          "name": "温泉卵",
+          "price": 60,
+          "cat": "小鉢",
+          "main": false,
+          "slots": [
+            "lunch"
+          ]
         }
       ]
     }

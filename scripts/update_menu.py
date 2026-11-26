@@ -36,7 +36,7 @@ CAFETERIAS_PATH = ROOT / "data" / "cafeterias.json"
 WEEK_PATH = ROOT / "data" / "week.json"
 JST = dt.timezone(dt.timedelta(hours=9))
 
-DEFAULT_MODEL = "gemini-3.8-flash"
+DEFAULT_MODELS = "gemini-3.8-flash,gemini-3.5-flash-lite"  # 先頭から順に試す（混雑時は次へ）
 API_BASE = "https://generativelanguage.googleapis.com/v1beta"
 API_REVISION = "2026-05-20"
 USER_AGENT = "gakushoku-gacha-menu-updater/1.0"
@@ -164,7 +164,20 @@ def parse_json_text(text: str):
         return None
 
 
-def call_gemini(pdf: bytes, prompt: str, api_key: str, model: str) -> dict:
+BUSY_CODES = (429, 500, 502, 503, 504)
+
+
+def call_gemini(pdf: bytes, prompt: str, api_key: str, models: list[str]) -> dict:
+    """モデルを順に試す。混雑（503など）なら少し待って1回だけ再試行し、だめなら次のモデルへ。"""
+    errors = []
+    for model in models:
+        result = call_one_model(pdf, prompt, api_key, model, errors)
+        if result is not None:
+            return result
+    raise UpdateError("Gemini の呼び出しに失敗しました:\n" + "\n".join(errors))
+
+
+def call_one_model(pdf: bytes, prompt: str, api_key: str, model: str, errors: list[str]) -> dict | None:
     b64 = base64.b64encode(pdf).decode()
     headers = {"Content-Type": "application/json", "x-goog-api-key": api_key}
     attempts = [
@@ -186,26 +199,30 @@ def call_gemini(pdf: bytes, prompt: str, api_key: str, model: str) -> dict:
             "generationConfig": {"responseMimeType": "application/json"},
         }),
     ]
-    errors = []
     for url, hdrs, body in attempts:
-        for retry in range(3):
+        label = f"{model} {url.split('/v1beta/')[1].split(':')[-1]}"
+        for retry in range(2):
             try:
                 res = json.loads(http(url, body, hdrs))
                 result = find_json_text(res)
                 if result is None:
                     raise UpdateError("レスポンスにメニューのJSONが見つかりません")
+                print(f"  （{label} で読み取り）", file=sys.stderr)
                 return result
             except urllib.error.HTTPError as e:
-                detail = e.read().decode(errors="replace")[:300]
-                if e.code in (429, 500, 502, 503, 504) and retry < 2:
-                    time.sleep(20 * (retry + 1))
-                    continue
-                errors.append(f"{url.split('/v1beta/')[1]} → HTTP {e.code}: {detail}")
-                break
+                detail = " ".join(e.read().decode(errors="replace").split())[:200]
+                if e.code in BUSY_CODES:
+                    if retry == 0:
+                        time.sleep(15)
+                        continue
+                    errors.append(f"{label} → HTTP {e.code}（混雑）: {detail}")
+                    return None  # 同じモデルの別の呼び方も混雑しているはずなので次のモデルへ
+                errors.append(f"{label} → HTTP {e.code}: {detail}")
+                break  # 呼び方の問題かもしれないので、もう一方の呼び方を試す
             except (UpdateError, urllib.error.URLError, TimeoutError) as e:
-                errors.append(f"{url.split('/v1beta/')[1]} → {e}")
+                errors.append(f"{label} → {e}")
                 break
-    raise UpdateError("Gemini の呼び出しに失敗しました:\n" + "\n".join(errors))
+    return None
 
 
 # ---------------------------------------------------------------- 変換（食堂ごとのルール）
@@ -335,7 +352,7 @@ def main(argv=None) -> int:
     base = load_json(CAFETERIAS_PATH)
     week = load_json(WEEK_PATH)
     api_key = os.environ.get("GEMINI_API_KEY", "")
-    model = os.environ.get("GEMINI_MODEL") or DEFAULT_MODEL
+    models = [m.strip() for m in (os.environ.get("GEMINI_MODEL") or DEFAULT_MODELS).split(",") if m.strip()]
     today = dt.datetime.now(JST).date()
 
     report, failed, changed = [], False, False
@@ -356,7 +373,7 @@ def main(argv=None) -> int:
                 if not api_key:
                     raise UpdateError("環境変数 GEMINI_API_KEY が設定されていません")
                 prompt = build_prompt(caf, today, to_example(prev) if prev else None)
-                raw = call_gemini(pdf, prompt, api_key, model)
+                raw = call_gemini(pdf, prompt, api_key, models)
             entry = transform(raw, caf)
             errors = validate(entry, prev)
             if errors:
@@ -380,7 +397,7 @@ def main(argv=None) -> int:
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:
         with open(summary, "a", encoding="utf-8") as f:
-            f.write(f"## メニュー更新（モデル: {model}）\n{text}\n")
+            f.write(f"## メニュー更新（モデル: {', '.join(models)}）\n{text}\n")
     return 1 if failed else 0
 
 

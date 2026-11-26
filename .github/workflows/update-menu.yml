@@ -55,6 +55,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+      - name: 成功したら失敗の Issue を閉じる
+        if: steps.update.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for num in $(gh issue list --state open --search "in:title メニュー自動更新に失敗しました" --json number --jq '.[].number'); do
+            gh issue close "$num" --comment "自動更新が成功したので閉じます: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          done
+
       - name: 失敗したら Issue で知らせる
         if: steps.update.outcome == 'failure'
         env:

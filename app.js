@@ -220,7 +220,16 @@
     $("burst").innerHTML = "";
   }
   function clearResult() { closeResult(); resetMachine(); }
-  function closeResult() { if ($("result").open) $("result").close(); }
+  function closeResult() {
+    const dlg = $("result");
+    if (!dlg.hasAttribute("open")) return;
+    if (typeof dlg.close === "function") dlg.close(); else dlg.removeAttribute("open");
+  }
+  function openResult() {
+    const dlg = $("result");
+    if (typeof dlg.showModal === "function") dlg.showModal();
+    else dlg.setAttribute("open", ""); // <dialog> 未対応の古いブラウザでも結果だけは出す
+  }
 
   // ---------- spin ----------
   function showResult({ picks, rest, error }, budget, rarity) {
@@ -362,7 +371,7 @@
 
     showResult(outcome, budget, rarity);
     if (!reduce) await openCapsule(rarity?.tier, capsule.style.background);
-    $("result").showModal();
+    openResult();
     endStage();
     resetMachine();
     btn.disabled = false;

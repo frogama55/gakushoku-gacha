@@ -41,10 +41,26 @@ body {
 }
 .wrap { max-width: 560px; margin: 0 auto; padding: 24px 16px 48px; }
 
-.hero { text-align: center; margin-bottom: 20px; }
+.hero { text-align: center; margin-bottom: 4px; }
 .eyebrow { margin: 0; color: var(--accent); font-weight: 700; letter-spacing: .08em; font-size: .85rem; }
-h1 { margin: 2px 0 4px; font-size: 2.2rem; letter-spacing: .04em; }
-.lead { margin: 0; color: var(--muted); }
+h1 { margin: 0; font-size: 1.9rem; letter-spacing: .04em; line-height: 1.3; }
+
+/* ===== settings（添え物：普段は1行の要約だけ） ===== */
+.settings { margin-top: 6px; }
+.settings > summary {
+  list-style: none;
+  display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+  margin: 0 auto; width: fit-content; max-width: 100%;
+  padding: 8px 16px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--line);
+  font-size: .88rem; color: var(--muted); cursor: pointer;
+}
+.settings > summary::-webkit-details-marker { display: none; }
+.settings .sum-text { color: var(--ink); font-weight: 600; text-align: center; }
+.settings .sum-edit { color: var(--accent); font-weight: 700; white-space: nowrap; }
+.settings .sum-edit::after { content: "条件を変える ▾"; }
+.settings[open] .sum-edit::after { content: "閉じる ▴"; }
+.settings .panel { margin-top: 10px; }
 
 .panel {
   background: var(--surface);
@@ -103,7 +119,10 @@ select, input[type="number"] {
 .check input { width: 18px; height: 18px; accent-color: var(--accent); }
 
 /* ===== machine ===== */
-.machine-area { display: grid; justify-items: center; gap: 14px; margin: 28px 0 8px; }
+.machine-area { display: grid; justify-items: center; gap: 16px; margin: 12px 0 8px; }
+/* 機械を大きく見せる（.machine 自体は震え演出で transform を使うので外側で拡大） */
+.machine-scale { width: 234px; height: 320px; } /* 出てきたカプセルの分まで高さを取る */
+.machine-scale .machine { transform-origin: 0 0; scale: 1.3; }
 .machine { position: relative; width: 180px; height: 230px; }
 .dome {
   position: absolute; left: 15px; top: 0; width: 150px; height: 130px;
@@ -147,14 +166,18 @@ select, input[type="number"] {
 @keyframes drop { to { opacity: 1; transform: translateY(14px) scale(1); } }
 
 .spin {
-  font: inherit; font-size: 1.15rem; font-weight: 800; letter-spacing: .06em;
+  font: inherit; font-size: 1.5rem; font-weight: 900; letter-spacing: .08em;
   color: var(--accent-ink); background: var(--accent);
-  border: 0; border-radius: 999px; padding: 14px 40px; cursor: pointer;
-  box-shadow: 0 4px 0 var(--machine-dark);
-  transition: transform .08s;
+  border: 0; border-radius: 999px; padding: 18px 24px; cursor: pointer;
+  width: min(100%, 340px);
+  box-shadow: 0 6px 0 var(--machine-dark), 0 10px 24px rgba(224, 89, 42, .35);
+  transition: transform .08s, box-shadow .08s;
+  animation: beckon 2.4s ease-in-out infinite;
 }
-.spin:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--machine-dark); }
-.spin:disabled { opacity: .5; cursor: wait; }
+.spin:hover { filter: brightness(1.05); }
+.spin:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--machine-dark); animation: none; }
+.spin:disabled { opacity: .5; cursor: wait; animation: none; }
+@keyframes beckon { 0%, 70%, 100% { transform: none; } 80% { transform: scale(1.04); } 90% { transform: scale(.99); } }
 .status { margin: 0; min-height: 1.4em; color: var(--muted); font-size: .9rem; text-align: center; }
 
 /* ===== rare effects ===== */
@@ -256,6 +279,7 @@ select, input[type="number"] {
   .machine.explode .dome, .machine.explode .body { animation: none; opacity: 0; }
   .machine .capsule.big { animation: none; opacity: 1; transform: scale(2); }
   .machine.spinning .knob, .machine.spinning .ball { animation: none; }
+  .spin { animation: none; }
   .machine.dropped .capsule { animation: none; opacity: 1; transform: translateY(14px); }
   .picks li { animation: none !important; opacity: 1 !important; }
 }

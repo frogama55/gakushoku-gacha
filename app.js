@@ -199,6 +199,22 @@
     if (!items.length) status.textContent = note || "この日・時間帯はメニューがありません";
     else status.textContent = note || `${caf.place}｜${caf.hours}`;
     $("spin").disabled = items.length === 0;
+    renderSummary();
+  }
+
+  // 折りたたんだ設定の1行要約：「第一食堂・11/26（木）昼・予算 ¥500」
+  function renderSummary() {
+    const caf = cafeteria();
+    const d = parseIso(state.date);
+    const today = state.date === isoLocal(new Date()) ? "今日 " : "";
+    const budget = Math.floor(Number($("budget").value));
+    const extras = [$("requireMain").checked && "主食あり", !$("allowDup").checked && "重複なし"].filter(Boolean);
+    $("summary").textContent = [
+      caf.name,
+      `${today}${d.getMonth() + 1}/${d.getDate()}（${WEEKDAYS[d.getDay()]}）${data.slots[state.slot]}`,
+      budget > 0 ? `予算 ${yen(budget)}` : "予算未入力",
+      ...extras,
+    ].join("・");
   }
 
   const MACHINE_FX = ["spinning", "dropped", "shake", "shake-soft", "glow-gold", "glow-rainbow", "explode"];
@@ -291,6 +307,7 @@
     const budget = Math.floor(Number($("budget").value));
     if (!Number.isFinite(budget) || budget <= 0) {
       $("status").textContent = "予算を入力してください";
+      $("settings").open = true;
       $("budget").focus();
       return;
     }
@@ -403,13 +420,14 @@
     [300, 400, 500, 700, 1000].forEach((v) => {
       const b = document.createElement("button");
       b.type = "button"; b.textContent = yen(v);
-      b.addEventListener("click", () => { $("budget").value = v; persist(); });
+      b.addEventListener("click", () => { $("budget").value = v; persist(); renderSummary(); });
       $("budgetChips").appendChild(b);
     });
 
     $("date").addEventListener("change", (e) => { state.date = e.target.value; renderSlots(); renderLineup(); clearResult(); });
     $("budget").addEventListener("change", persist);
-    ["requireMain", "allowDup"].forEach((k) => $(k).addEventListener("change", persist));
+    $("budget").addEventListener("input", renderSummary);
+    ["requireMain", "allowDup"].forEach((k) => $(k).addEventListener("change", () => { persist(); renderSummary(); }));
     $("spin").addEventListener("click", spin);
     $("again").addEventListener("click", spin);
     $("copy").addEventListener("click", copyResult);

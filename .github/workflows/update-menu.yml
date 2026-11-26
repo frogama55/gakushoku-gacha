@@ -9,6 +9,10 @@ on:
         description: "PDFが変わっていなくても読み直す"
         type: boolean
         default: false
+      only:
+        description: "この食堂IDだけ処理する（tsudanuma / shinnara1f / shinnara2f、空なら全部）"
+        type: string
+        default: ""
 
 permissions:
   contents: write
@@ -37,7 +41,9 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
-        run: python3 scripts/update_menu.py ${{ inputs.force && '--force' || '' }} | tee update-log.txt
+          FORCE: ${{ inputs.force && '--force' || '' }}
+          ONLY: ${{ inputs.only }}
+        run: python3 scripts/update_menu.py $FORCE ${ONLY:+--only "$ONLY"} | tee update-log.txt
 
       - name: 変更があればコミットして公開
         run: |

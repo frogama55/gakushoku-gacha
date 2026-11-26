@@ -377,6 +377,8 @@ def main(argv=None) -> int:
             entry = transform(raw, caf)
             errors = validate(entry, prev)
             if errors:
+                # 原因を追えるよう、Gemini の生の出力をログに残す
+                print(f"[{cid}] Gemini の出力:\n{json.dumps(raw, ensure_ascii=False)[:4000]}", file=sys.stderr)
                 raise UpdateError("検証エラー:\n" + "\n".join(f"  - {e}" for e in errors))
             entry["sourceHash"] = digest
             if entry != prev:

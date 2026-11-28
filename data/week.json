@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-26",
+  "updatedAt": "2026-11-28",
   "cafeterias": {
     "tsudanuma": {
       "weekStart": "2026-11-23",
@@ -487,9 +487,97 @@
       "sourceHash": "32f8789d1defd5471ea7392466dc37169617f549ea9ce74a5d935c4dc125707d"
     },
     "shinnara1f": {
-      "weekStart": "2026-11-23",
+      "weekStart": "2026-11-30",
       "daily": {
-        "2026-11-23": [
+        "2026-11-30": [
+          {
+            "name": "朝定食 メンチカツ",
+            "price": 300,
+            "cat": "朝定食",
+            "main": true,
+            "slot": "morning"
+          },
+          {
+            "name": "白身フライタルタルソース＆肉団子",
+            "price": 350,
+            "cat": "定食・丼",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "焼鳥玉子丼",
+            "price": 350,
+            "cat": "定食・丼",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "唐揚おろしうどん・そば",
+            "price": 350,
+            "cat": "麺",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "正油ラーメン",
+            "price": 350,
+            "cat": "麺",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "味噌ラーメン",
+            "price": 350,
+            "cat": "麺",
+            "main": true,
+            "slot": "lunch"
+          }
+        ],
+        "2026-12-01": [
+          {
+            "name": "朝定食 鶏の八幡巻＆かぼちゃコロッケ",
+            "price": 300,
+            "cat": "朝定食",
+            "main": true,
+            "slot": "morning"
+          },
+          {
+            "name": "ハンバーグのマヨコーンチーズ焼＆フライドポテト",
+            "price": 350,
+            "cat": "定食・丼",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "味噌カツ丼",
+            "price": 350,
+            "cat": "定食・丼",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "天ぷらうどん・そば",
+            "price": 300,
+            "cat": "麺",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "カレーうどん・そば",
+            "price": 300,
+            "cat": "麺",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "味噌辛子タンメン",
+            "price": 400,
+            "cat": "麺",
+            "main": true,
+            "slot": "lunch"
+          }
+        ],
+        "2026-12-02": [
           {
             "name": "朝定食 豆腐ハンバーグ",
             "price": 300,
@@ -498,146 +586,21 @@
             "slot": "morning"
           },
           {
-            "name": "チキンカツのチーズ焼＆ポテトサラダ",
+            "name": "ヒレカツ",
             "price": 350,
             "cat": "定食・丼",
             "main": true,
             "slot": "lunch"
           },
           {
-            "name": "ペッパービーフライス",
-            "price": 400,
-            "cat": "定食・丼",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "天ぷらうどん・そば",
-            "price": 300,
-            "cat": "麺",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "カレーうどん・そば",
-            "price": 300,
-            "cat": "麺",
-            "main": true,
-            "slot": "lunch"
-          }
-        ],
-        "2026-11-24": [
-          {
-            "name": "朝定食 ハムチーズピカタ",
-            "price": 300,
-            "cat": "朝定食",
-            "main": true,
-            "slot": "morning"
-          },
-          {
-            "name": "ミックスフライ（白身フライ・エビフライ・チキンカツ）",
+            "name": "タッカルビ丼",
             "price": 350,
             "cat": "定食・丼",
             "main": true,
             "slot": "lunch"
           },
           {
-            "name": "ビーフストロガノフ",
-            "price": 400,
-            "cat": "定食・丼",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "温玉のせ肉うどん・肉そば",
-            "price": 350,
-            "cat": "麺",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "正油ラーメン",
-            "price": 350,
-            "cat": "麺",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "味噌ラーメン",
-            "price": 350,
-            "cat": "麺",
-            "main": true,
-            "slot": "lunch"
-          }
-        ],
-        "2026-11-25": [
-          {
-            "name": "朝定食 グリルチキン",
-            "price": 300,
-            "cat": "朝定食",
-            "main": true,
-            "slot": "morning"
-          },
-          {
-            "name": "ヒレカツ定食",
-            "price": 350,
-            "cat": "定食・丼",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "玉子のせビビンバ丼",
-            "price": 350,
-            "cat": "定食・丼",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "天ぷらうどん・そば",
-            "price": 300,
-            "cat": "麺",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "カレーうどん・そば",
-            "price": 300,
-            "cat": "麺",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "つけ麺",
-            "price": 450,
-            "cat": "麺",
-            "main": true,
-            "slot": "lunch"
-          }
-        ],
-        "2026-11-26": [
-          {
-            "name": "朝定食 肉団子＆春巻",
-            "price": 300,
-            "cat": "朝定食",
-            "main": true,
-            "slot": "morning"
-          },
-          {
-            "name": "ハンバーグのポテトチーズ焼",
-            "price": 350,
-            "cat": "定食・丼",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "ホイコーロー丼＆春巻",
-            "price": 350,
-            "cat": "定食・丼",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "ちくわ天うどん・そば",
+            "name": "けんちんうどん・そば",
             "price": 300,
             "cat": "麺",
             "main": true,
@@ -658,7 +621,51 @@
             "slot": "lunch"
           }
         ],
-        "2026-11-27": [
+        "2026-12-03": [
+          {
+            "name": "朝定食 野菜コロッケ",
+            "price": 300,
+            "cat": "朝定食",
+            "main": true,
+            "slot": "morning"
+          },
+          {
+            "name": "チーズインハンバーグ＆フライドポテト",
+            "price": 350,
+            "cat": "定食・丼",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "マーボー丼＆シューマイ",
+            "price": 350,
+            "cat": "定食・丼",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "天ぷらうどん・そば",
+            "price": 300,
+            "cat": "麺",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "カレーうどん・そば",
+            "price": 300,
+            "cat": "麺",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "油そば",
+            "price": 400,
+            "cat": "麺",
+            "main": true,
+            "slot": "lunch"
+          }
+        ],
+        "2026-12-04": [
           {
             "name": "朝定食 さんまフライ",
             "price": 300,
@@ -667,29 +674,22 @@
             "slot": "morning"
           },
           {
-            "name": "スタミナ焼＆牛肉コロッケ",
+            "name": "和とんかつ＆ポテトサラダ",
             "price": 350,
             "cat": "定食・丼",
             "main": true,
             "slot": "lunch"
           },
           {
-            "name": "唐揚丼",
+            "name": "スタミナ丼",
             "price": 350,
             "cat": "定食・丼",
             "main": true,
             "slot": "lunch"
           },
           {
-            "name": "天ぷらうどん・そば",
-            "price": 300,
-            "cat": "麺",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "カレーうどん・そば",
-            "price": 300,
+            "name": "明太釜玉うどん",
+            "price": 350,
             "cat": "麺",
             "main": true,
             "slot": "lunch"
@@ -711,85 +711,56 @@
         ]
       },
       "closed": [],
-      "closedSlots": {
-        "2026-11-23": [
-          "dinner"
-        ]
-      },
-      "notes": {
-        "2026-11-23": "勤労感謝の日：10:30〜14:00、夕定食の営業は休業させて頂きます"
-      },
+      "closedSlots": {},
+      "notes": {},
       "toppings": {
         "グルメカレー": {
-          "2026-11-23": "唐揚",
-          "2026-11-24": "ナゲット",
-          "2026-11-25": "グリルチキン",
-          "2026-11-26": "イカフライ",
-          "2026-11-27": "スクランブルエッグ"
+          "2026-11-30": "チーズ包みメンチカツ",
+          "2026-12-01": "焼肉",
+          "2026-12-02": "唐揚",
+          "2026-12-03": "フライドチキン",
+          "2026-12-04": "チキンカツ"
         }
       },
-      "sourceHash": "563e4adf9a790958cae6ca5caa956022a73ce6be9c2b372052f69df2a92945dc"
+      "sourceHash": "ce4186022356387e3d99e7dc6c0c6aa2e95d9e6048f700e4cea147e53cec0929"
     },
     "shinnara2f": {
-      "weekStart": "2026-11-23",
+      "weekStart": "2026-11-30",
       "daily": {
-        "2026-11-24": [
+        "2026-11-30": [
           {
-            "name": "ガパオライス",
+            "name": "ハンバーグ丼",
             "price": 350,
             "cat": "丼",
             "main": true,
             "slot": "lunch"
           },
           {
-            "name": "ササミチーズカツカレー",
+            "name": "温玉チーズカレー",
             "price": 350,
             "cat": "カレー",
             "main": true,
             "slot": "lunch"
           },
           {
-            "name": "温玉ミートソース",
-            "price": 400,
-            "cat": "パスタ",
-            "main": true,
-            "slot": "lunch"
-          }
-        ],
-        "2026-11-25": [
-          {
-            "name": "まぐろたたき丼",
-            "price": 400,
-            "cat": "丼",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "メンチカツカレー",
+            "name": "トマトパスタ",
             "price": 350,
-            "cat": "カレー",
-            "main": true,
-            "slot": "lunch"
-          },
-          {
-            "name": "アラビアータ",
-            "price": 400,
             "cat": "パスタ",
             "main": true,
             "slot": "lunch"
           }
         ],
-        "2026-11-26": [
+        "2026-12-01": [
           {
-            "name": "豚照り焼き丼",
+            "name": "陳さんの麻婆丼",
             "price": 350,
             "cat": "丼",
             "main": true,
             "slot": "lunch"
           },
           {
-            "name": "バターチキンカレー",
-            "price": 350,
+            "name": "ホワイトカレー",
+            "price": 400,
             "cat": "カレー",
             "main": true,
             "slot": "lunch"
@@ -802,23 +773,69 @@
             "slot": "lunch"
           }
         ],
-        "2026-11-27": [
+        "2026-12-02": [
           {
-            "name": "親子丼",
-            "price": 350,
+            "name": "温玉豚丼",
+            "price": 400,
             "cat": "丼",
             "main": true,
             "slot": "lunch"
           },
           {
-            "name": "コーンチーズハンバーグカレー",
+            "name": "挽肉とトマトのカレー",
             "price": 350,
             "cat": "カレー",
             "main": true,
             "slot": "lunch"
           },
           {
-            "name": "まぜそば",
+            "name": "ポルチーニ",
+            "price": 350,
+            "cat": "パスタ",
+            "main": true,
+            "slot": "lunch"
+          }
+        ],
+        "2026-12-03": [
+          {
+            "name": "牛すじシチュー",
+            "price": 400,
+            "cat": "丼",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "ササミチーズカレー",
+            "price": 350,
+            "cat": "カレー",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "陳さんの鶏そば",
+            "price": 400,
+            "cat": "パスタ",
+            "main": true,
+            "slot": "lunch"
+          }
+        ],
+        "2026-12-04": [
+          {
+            "name": "オムライス",
+            "price": 400,
+            "cat": "丼",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "グリーンカレー",
+            "price": 400,
+            "cat": "カレー",
+            "main": true,
+            "slot": "lunch"
+          },
+          {
+            "name": "クリーム明太",
             "price": 400,
             "cat": "パスタ",
             "main": true,
@@ -826,15 +843,11 @@
           }
         ]
       },
-      "closed": [
-        "2026-11-23"
-      ],
+      "closed": [],
       "closedSlots": {},
-      "notes": {
-        "2026-11-23": "勤労感謝の日"
-      },
+      "notes": {},
       "toppings": {},
-      "sourceHash": "657640905741983ce5281aad3566ba65dc3d0d4a8ce71f93cbff4c7465f5ced0"
+      "sourceHash": "58a97569abcb11ff56d0afc18b3b47a927b2e501261a5a7c3db5652c506ccba1"
     }
   }
 }
